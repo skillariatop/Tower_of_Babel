@@ -1,237 +1,244 @@
 # 🗼 Tower of Babel
 
-> Открытая система коллективной разработки, которой управляют люди, а исполняет — ИИ.
-> Учебно-боевой проект школы [Skillaria.Top](https://skillaria.top).
+🌍 [العربية](translations/README.ar.md) · [বাংলা](translations/README.bn.md) · [Deutsch](translations/README.de.md) · **English** · [Español](translations/README.es.md) · [Filipino](translations/README.tl.md) · [Français](translations/README.fr.md) · [हिन्दी](translations/README.hi.md) · [Bahasa Indonesia](translations/README.id.md) · [Italiano](translations/README.it.md) · [日本語](translations/README.ja.md) · [한국어](translations/README.ko.md) · [Português](translations/README.pt.md) · [Русский](translations/README.ru.md) · [Kiswahili](translations/README.sw.md) · [தமிழ்](translations/README.ta.md) · [ไทย](translations/README.th.md) · [Türkçe](translations/README.tr.md) · [Tiếng Việt](translations/README.vi.md) · [中文](translations/README.zh.md)
+
+> An open system for collective software development — governed by people, executed by AI.
+> A learning-by-building project by the [Skillaria.Top](https://skillaria.top) school.
 
 ---
 
-## 💡 Идея
+## 💡 The Idea
 
-Люди договариваются в **Discord**, код живёт на **GitHub**, а между ними работает **ИИ-Оркестратор**, который превращает решения сообщества в конкретные задачи, распределяет их, следит за выполнением и ведёт всю рутину.
+People make decisions in **Discord**, code lives on **GitHub**, and in between works an **AI Orchestrator** that turns community decisions into concrete tasks, assigns them, tracks progress, and handles all the routine.
 
-Особенность проекта — **самоприменимость**: система Tower of Babel разрабатывается *по правилам самой системы Tower of Babel*. Каждое улучшение бота, оркестратора или процессов проходит через те же голосования, задачи и ревью, которые она автоматизирует.
+The project's defining feature is **self-application**: Tower of Babel is developed *by the rules of Tower of Babel itself*. Every improvement to the bot, the orchestrator, or the processes goes through the same votes, tasks, and reviews that the system automates.
 
 ```mermaid
 flowchart LR
-    D[💬 Discord<br/>обсуждение · голосование · роли] -->|принятые решения| AI[🤖 ИИ-Оркестратор<br/>декомпозиция · назначение · контроль]
-    AI -->|issues · ветки · статусы| G[🐙 GitHub<br/>код · ревью · CI/CD · релизы]
-    G -->|события, отчёты| AI
-    AI -->|дайджесты, напоминания| D
+    D[💬 Discord<br/>discussion · voting · roles] -->|accepted decisions| AI[🤖 AI Orchestrator<br/>decomposition · assignment · tracking]
+    AI -->|issues · branches · statuses| G[🐙 GitHub<br/>code · review · CI/CD · releases]
+    G -->|events, reports| AI
+    AI -->|digests, reminders| D
 ```
 
 ---
 
-## 📜 Принципы
+## 📜 Principles
 
-1. **Люди решают — ИИ исполняет.** Оркестратор не принимает ни одного содержательного решения сам. Его источник правды — зафиксированные решения сообщества.
-2. **Прозрачность.** Каждое действие ИИ и каждое решение людей записывается в публичный журнал. Нет «закрытых» решений.
-3. **Меритократия.** Полномочия не выдаются — они зарабатываются вкладом и подтверждаются голосованием.
-4. **Обратимость.** Любое решение можно пересмотреть новым голосованием. Любое действие ИИ можно откатить.
-5. **Самоприменимость.** Проект развивается по собственным правилам с первого дня — сначала вручную, потом всё более автоматизированно.
+1. **People decide — AI executes.** The Orchestrator makes no substantive decisions of its own. Its source of truth is the recorded decisions of the community.
+2. **Transparency.** Every AI action and every human decision is written to a public log. There are no "closed-door" decisions.
+3. **Meritocracy.** Authority is not handed out — it is earned through contribution and confirmed by a vote.
+4. **Reversibility.** Any decision can be revisited by a new vote. Any AI action can be rolled back.
+5. **Self-application.** The project evolves by its own rules from day one — manually at first, then with ever more automation.
 
 ---
 
-## 👥 Система ролей
+## 👥 Role System
 
-Роли едины для Discord и GitHub: бот синхронизирует их автоматически (до появления бота — Хранители вручную).
+Roles are unified across Discord and GitHub: the bot syncs them automatically (until the bot exists, the Keepers do it manually).
 
-| Роль | Как получить | Discord | GitHub | Полномочия |
+| Role | How to obtain | Discord | GitHub | Authority |
 |---|---|---|---|---|
-| 👁️ **Наблюдатель** | Вступить на сервер | Чтение всех каналов, вопросы в `#help` | Fork, создание Issues | Смотреть, спрашивать, предлагать идеи |
-| 🧱 **Подмастерье** | Представиться + взять первую задачу | Голос в *бытовых* голосованиях, участие в обсуждениях | PR из форков, назначение на задачи `good first issue` | Брать задачи, участвовать в обсуждениях |
-| ⚒️ **Каменщик** | 5 принятых PR + простое большинство голосов | Голос во *всех* голосованиях, создание RFC | Триаж: метки, назначения; ревью PR | Брать любые задачи, ревьюить, выдвигать RFC и кандидатов |
-| 🏛️ **Зодчий** | Выдвижение + 2/3 голосов Каменщиков | Модерация тех-каналов, ведение своего домена | Maintain: merge в `main`, milestones, релизные ветки | Единолично решать вопросы *своего домена* (см. «Домены»), мержить PR |
-| 🛡️ **Хранитель** | Кураторы школы / основатели | Администратор сервера | Admin: secrets, настройки, защита веток | Экстренное вето, kill switch ИИ, онбординг. Не вмешивается в обычную разработку |
-| 🤖 **Оркестратор** | Это бот. Им нельзя стать 🙂 | Своя роль с ограниченными правами | Отдельный machine-аккаунт, без merge в `main` | См. раздел «ИИ-Оркестратор» |
+| 👁️ **Observer** | Join the server via your school dashboard | Read all channels, ask in `#help` | Fork, create Issues | Watch, ask, suggest ideas |
+| 🧱 **Apprentice** | Introduce yourself + take your first task | Vote in *routine* votes, join discussions | PRs from forks, assignment to `good first issue` tasks | Take tasks, participate in discussions |
+| ⚒️ **Mason** | 5 merged PRs + simple majority vote | Vote in *all* votes, create RFCs | Triage: labels, assignments; PR reviews | Take any task, review, propose RFCs and candidates |
+| 🏛️ **Architect** | Nomination + 2/3 of Masons' votes | Moderate tech channels, own a domain | Maintain: merge into `main`, milestones, release branches | Decide *within their domain* unilaterally (see "Domains"), merge PRs |
+| 🛡️ **Keeper** | School curators / founders | Server administrator | Admin: secrets, settings, branch protection | Emergency veto, AI kill switch, onboarding. Does not interfere in day-to-day development |
+| 🤖 **Orchestrator** | It's the bot. You can't become it 🙂 | Its own role with limited rights | Separate machine account, no merge into `main` | See "AI Orchestrator" |
 
-**Домены** — зоны ответственности Зодчих (например: `bot`, `orchestrator`, `infra`, `docs`). Зодчий решает вопросы внутри домена без голосования, но любые 3 Каменщика могут оспорить его решение и вынести на голосование («челлендж»).
+**Domains** are areas of responsibility owned by Architects (e.g. `bot`, `orchestrator`, `infra`, `docs`). An Architect decides matters within their domain without a vote, but any 3 Masons may challenge the decision and put it to a vote (a "challenge").
 
-**Понижение роли** происходит тем же голосованием, что и повышение, либо автоматически после 60 дней неактивности (роль замораживается, восстанавливается по возвращении без голосования).
+**Demotion** happens through the same vote as promotion, or automatically after 60 days of inactivity (the role is frozen and restored upon return without a vote).
 
 ---
 
-## 🗳️ Принятие решений
+## 🗳️ Decision-Making
 
-Все решения делятся на три уровня. Голосование проводится в `#voting` (реакциями или командой бота `/vote`), результат фиксируется файлом в `decisions/` — это **источник правды для ИИ**.
+All decisions fall into three levels. Votes are held in `#voting` (via reactions or the bot's `/vote` command), and the result is recorded as a file in `decisions/` — this is the **source of truth for the AI**.
 
-| Уровень | Примеры | Кто голосует | Порог | Кворум | Срок |
+| Level | Examples | Who votes | Threshold | Quorum | Duration |
 |---|---|---|---|---|---|
-| 🟢 **Бытовое** | название фичи, формат дайджеста, приоритет задачи | Подмастерье+ | простое большинство | 3 голоса | 24 ч |
-| 🟡 **Значимое** | архитектура, стек, roadmap, повышение до Каменщика/Зодчего | Каменщик+ | 2/3 | 50% активных | 48 ч |
-| 🔴 **Критическое** | изменение правил управления, права ИИ, лицензия, удаление данных | Каменщик+ | 3/4 **+ одобрение Хранителя** | 50% активных | 72 ч |
+| 🟢 **Routine** | feature naming, digest format, task priority | Apprentice+ | simple majority | 3 votes | 24 h |
+| 🟡 **Significant** | architecture, tech stack, roadmap, promotion to Mason/Architect | Mason+ | 2/3 | 50% of active members | 48 h |
+| 🔴 **Critical** | changes to governance rules, AI permissions, license, data deletion | Mason+ | 3/4 **+ Keeper approval** | 50% of active members | 72 h |
 
-Дополнительно:
+Additionally:
 
-- **Решение по полномочиям.** Зодчий может решить вопрос своего домена без голосования — решение всё равно фиксируется в `decisions/` с пометкой `by-authority`.
-- **Экстренное решение.** Хранитель может действовать единолично (инцидент, безопасность), но обязан в течение 24 ч опубликовать отчёт; сообщество может отменить решение значимым голосованием.
-- **RFC-процесс.** Крупные предложения оформляются как RFC в форум-канале `#rfc`: проблема → предложение → альтернативы → обсуждение минимум 48 ч → голосование.
+- **Decision by authority.** An Architect may settle a matter in their domain without a vote — the decision is still recorded in `decisions/` with the `by-authority` flag.
+- **Emergency decision.** A Keeper may act unilaterally (incident, security), but must publish a report within 24 h; the community may overturn the decision with a significant vote.
+- **RFC process.** Major proposals are written up as RFCs in the `#rfc` forum channel: problem → proposal → alternatives → at least 48 h of discussion → vote.
 
-### Формат файла решения (`decisions/`)
+### Decision file format (`decisions/`)
 
 ```yaml
 # decisions/2026-06-15-choose-tech-stack.yaml
 id: 23
-title: "Выбор технологического стека"
+title: "Choosing the tech stack"
 level: significant        # routine | significant | critical | by-authority | emergency
 status: accepted          # accepted | rejected | superseded
 votes: { for: 14, against: 3, abstain: 2 }
-discord_thread: "<ссылка на тред>"
+discord_thread: "<link to the thread>"
 decision: |
-  Бэкенд на Python 3.12, бот на discord.py, ИИ через адаптер
-  OpenRouter/Ollama, БД PostgreSQL, деплой в Docker.
-tasks_hint: |              # подсказка Оркестратору для декомпозиции (опционально)
-  Начать с каркаса бота и CI.
+  Backend in Python 3.12, bot on discord.py, AI behind an
+  OpenRouter/Ollama adapter, PostgreSQL database, Docker deployment.
+tasks_hint: |              # a hint for the Orchestrator's decomposition (optional)
+  Start with the bot skeleton and CI.
 ```
 
 ---
 
-## 🤖 ИИ-Оркестратор
+## 🤖 AI Orchestrator
 
-Мозг рутины. Работает через OpenRouter (облачные модели) или Ollama (локальные) за единым адаптером — провайдер выбирается конфигом.
+The brain of the routine. Works through OpenRouter (cloud models) or Ollama (local models) behind a single adapter — the provider is chosen via config.
 
-### Что делает
+### What it does
 
-- 📥 **Читает** принятые решения из `decisions/` и треды Discord;
-- 🧩 **Декомпозирует** решения в GitHub Issues: подзадачи, метки, оценки, зависимости, milestone;
-- 🎯 **Назначает** задачи по приоритету: доброволец → подходящие навыки → наименьшая загрузка. Любое назначение можно отклонить одной командой;
-- ⏰ **Следит** за сроками: напоминает, эскалирует Зодчему домена, переназначает зависшие задачи;
-- 📝 **Суммирует**: краткие выжимки длинных обсуждений, еженедельный дайджест прогресса в `#announcements`;
-- 🔍 **Делает черновое ревью** PR (советы, не вердикт — финальное слово за человеком);
-- 🗳️ **Обслуживает голосования**: подсчёт, контроль кворума, генерация файла решения;
-- 📒 **Ведёт аудит**: каждое своё действие публикует в `#audit-log`.
+- 📥 **Reads** accepted decisions from `decisions/` and Discord threads;
+- 🧩 **Decomposes** decisions into GitHub Issues: subtasks, labels, estimates, dependencies, milestones;
+- 🎯 **Assigns** tasks by priority: volunteer → matching skills → lowest workload. Any assignment can be declined with a single command;
+- ⏰ **Tracks** deadlines: reminds, escalates to the domain's Architect, reassigns stalled tasks;
+- 📝 **Summarizes**: short digests of long discussions, a weekly progress digest in `#announcements`;
+- 🔍 **Drafts PR reviews** (advice, not a verdict — the final word belongs to a human);
+- 🗳️ **Runs votes**: counting, quorum control, generating the decision file;
+- 📒 **Keeps the audit log**: every action it takes is published in `#audit-log`.
 
-### Что НЕ может (жёсткие ограничения)
+### What it CANNOT do (hard limits)
 
-- ❌ Мержить в `main` и релизные ветки (branch protection);
-- ❌ Менять роли людей (только фиксирует итоги голосований);
-- ❌ Изменять свой системный промпт, права или конфиг — только через 🔴 критическое голосование;
-- ❌ Касаться секретов, настроек репозитория, биллинга;
-- ❌ Удалять ветки, issues, сообщения людей;
-- ❌ Действовать без зафиксированного решения — на «устные» просьбы в чате отвечает «оформите решение».
+- ❌ Merge into `main` or release branches (branch protection);
+- ❌ Change people's roles (it only records vote outcomes);
+- ❌ Modify its own system prompt, permissions, or config — only via a 🔴 critical vote;
+- ❌ Touch secrets, repository settings, or billing;
+- ❌ Delete branches, issues, or people's messages;
+- ❌ Act without a recorded decision — to "verbal" requests in chat it replies "please formalize a decision".
 
-У Хранителей есть **kill switch** — мгновенная остановка бота одной командой.
-
----
-
-## 🔄 Жизненный цикл задачи
-
-```
-💬 Обсуждение в Discord
-        ↓
-🗳️ Голосование → decisions/NNN.yaml
-        ↓
-🤖 ИИ декомпозирует → GitHub Issues (backlog)
-        ↓
-🎯 Назначение (доброволец / ИИ предлагает)
-        ↓
-🌿 Ветка feat/NNN-кратко → код → PR
-        ↓
-✅ CI (тесты, линтеры) + 🤖 черновое ревью
-        ↓
-👤 Ревью Каменщика+ → merge Зодчим
-        ↓
-🚀 Релиз → 🤖 release notes → дайджест в Discord
-```
+Keepers have a **kill switch** — the bot can be stopped instantly with a single command.
 
 ---
 
-## 💬 Структура Discord-сервера
+## 🔄 Task Lifecycle
 
-| Канал | Назначение |
+```
+💬 Discussion in Discord
+        ↓
+🗳️ Vote → decisions/NNN.yaml
+        ↓
+🤖 AI decomposes → GitHub Issues (backlog)
+        ↓
+🎯 Assignment (volunteer / AI suggests)
+        ↓
+🌿 Branch feat/NNN-short-name → code → PR
+        ↓
+✅ CI (tests, linters) + 🤖 draft review
+        ↓
+👤 Review by a Mason+ → merge by an Architect
+        ↓
+🚀 Release → 🤖 release notes → digest in Discord
+```
+
+---
+
+## 💬 Discord Server Structure
+
+| Channel | Purpose |
 |---|---|
-| `#announcements` | Релизы, дайджесты, важные решения (пишут Зодчие+ и бот) |
-| `#rfc` *(форум)* | Крупные предложения, каждое — отдельный тред |
-| `#voting` | Только голосования и их результаты |
-| `#tasks` | Лента задач от Оркестратора, взятие/сдача задач |
-| `#dev-general` | Свободное техническое обсуждение |
-| `#help` | Вопросы новичков — отвечают все |
-| `#audit-log` | Журнал действий ИИ (только бот) |
-| 🔊 `Стройплощадка` | Голосовые созвоны, мобы, стендапы |
+| `#announcements` | Releases, digests, important decisions (Architects+ and the bot post) |
+| `#rfc` *(forum)* | Major proposals, each in its own thread |
+| `#voting` | Votes and their results only |
+| `#tasks` | Task feed from the Orchestrator, claiming/submitting tasks |
+| `#dev-general` | Free-form technical discussion |
+| `#help` | Newcomers' questions — everyone answers |
+| `#audit-log` | AI action log (bot only) |
+| 🔊 `Construction Site` | Voice calls, mob sessions, standups |
 
 ---
 
-## 📁 Структура репозитория (целевая)
+## 📁 Repository Structure (target)
 
 ```
 Tower_of_Babel/
-├── README.md            ← вы здесь
-├── docs/                ← правила, гайды, RFC-архив, ADR
-├── decisions/           ← журнал решений — источник правды для ИИ
-├── bot/                 ← Discord-бот (команды, голосования, роли)
-├── orchestrator/        ← ИИ-ядро (адаптер LLM, декомпозиция, назначение)
-├── integrations/        ← клиенты GitHub API, вебхуки
-├── infra/               ← Docker, compose, CI/CD, деплой
-└── tests/               ← тесты всего вышеперечисленного
+├── README.md            ← you are here
+├── translations/        ← this README in 19 other languages
+├── docs/                ← rules, guides, RFC archive, ADRs
+├── decisions/           ← decision log — the source of truth for the AI
+├── bot/                 ← Discord bot (commands, votes, roles)
+├── orchestrator/        ← AI core (LLM adapter, decomposition, assignment)
+├── integrations/        ← GitHub API clients, webhooks
+├── infra/               ← Docker, compose, CI/CD, deployment
+└── tests/               ← tests for all of the above
 ```
 
 ---
 
-## 🛠️ Технологии (предложение — утверждается Голосованием №1)
+## 🛠️ Technology (proposal — to be approved by Vote #1)
 
-| Слой | Кандидат | Почему |
+| Layer | Candidate | Why |
 |---|---|---|
-| Язык | Python 3.12+ | Низкий порог входа для учеников, богатая экосистема |
-| Discord | `discord.py` | Зрелая библиотека, slash-команды, события |
-| GitHub | `githubkit` / REST + webhooks | Полное покрытие API |
-| LLM | OpenRouter **и** Ollama за единым адаптером | Облако для качества, локально — бесплатно и приватно |
-| Вебхуки/API | FastAPI | Просто, асинхронно, автодокументация |
-| БД | SQLite → PostgreSQL | Начать просто, вырасти без боли |
-| Инфра | Docker Compose, GitHub Actions | Воспроизводимость, бесплатный CI |
+| Language | Python 3.12+ | Low entry barrier for students, rich ecosystem |
+| Discord | `discord.py` | Mature library, slash commands, events |
+| GitHub | `githubkit` / REST + webhooks | Full API coverage |
+| LLM | OpenRouter **and** Ollama behind a single adapter | Cloud for quality, local for free and private |
+| Webhooks/API | FastAPI | Simple, async, auto-documented |
+| Database | SQLite → PostgreSQL | Start simple, grow painlessly |
+| Infra | Docker Compose, GitHub Actions | Reproducibility, free CI |
 
 ---
 
-## 🗺️ Дорожная карта
+## 🗺️ Roadmap
 
-### Фаза 0 — «Фундамент» *(вручную, без кода)*
-- [ ] Создать Discord-сервер по структуре выше, раздать стартовые роли
-- [ ] Провести **Голосование №1** — утвердить стек (первое решение в `decisions/`!)
-- [ ] Утвердить правила из этого README критическим голосованием
-- [ ] Прогнать жизненный цикл задачи полностью вручную — понять процесс до автоматизации
+### Phase 0 — "The Foundation" *(manual, no code)*
+- [ ] Create the Discord server per the structure above, hand out starting roles
+- [ ] Hold **Vote #1** — approve the tech stack (the first decision in `decisions/`!)
+- [ ] Approve the rules from this README with a critical vote
+- [ ] Run a full task lifecycle by hand — understand the process before automating it
 
-### Фаза 1 — «Первый камень»: Discord-бот
-- [ ] Каркас бота, деплой в Docker
-- [ ] `/vote` — создание голосования, подсчёт, контроль кворума и сроков
-- [ ] Автогенерация файла решения в `decisions/` (PR от бота)
-- [ ] Синхронизация ролей Discord ↔ команды GitHub
+### Phase 1 — "The First Stone": the Discord bot
+- [ ] Bot skeleton, Docker deployment
+- [ ] `/vote` — creating a vote, counting, quorum and deadline control
+- [ ] Auto-generation of the decision file in `decisions/` (PR from the bot)
+- [ ] Discord role ↔ GitHub team synchronization
 
-### Фаза 2 — «Мост»: интеграция с GitHub
-- [ ] Webhooks GitHub → события в `#tasks` (PR открыт, CI упал, merge)
-- [ ] Команды `/task take`, `/task done`, `/task status`
-- [ ] Доска проекта (GitHub Projects), автоматизация статусов
+### Phase 2 — "The Bridge": GitHub integration
+- [ ] GitHub webhooks → events in `#tasks` (PR opened, CI failed, merged)
+- [ ] Commands `/task take`, `/task done`, `/task status`
+- [ ] Project board (GitHub Projects), status automation
 
-### Фаза 3 — «Голос Башни»: подключение ИИ
-- [ ] Единый адаптер LLM (OpenRouter / Ollama, выбор конфигом)
-- [ ] Декомпозиция решения → Issues с метками и зависимостями
-- [ ] Саммари тредов и еженедельный дайджест
+### Phase 3 — "The Voice of the Tower": plugging in the AI
+- [ ] Unified LLM adapter (OpenRouter / Ollama, chosen via config)
+- [ ] Decision decomposition → Issues with labels and dependencies
+- [ ] Thread summaries and the weekly digest
 
-### Фаза 4 — «Оркестр»: полное управление
-- [ ] Назначение задач (доброволец → навыки → загрузка)
-- [ ] Контроль сроков, напоминания, эскалация
-- [ ] Черновое ИИ-ревью PR, release notes
-- [ ] `#audit-log` и kill switch
+### Phase 4 — "The Orchestra": full management
+- [ ] Task assignment (volunteer → skills → workload)
+- [ ] Deadline control, reminders, escalation
+- [ ] Draft AI reviews of PRs, release notes
+- [ ] `#audit-log` and the kill switch
 
-### Фаза 5 — «Самострой»
-- [ ] Система полностью ведёт собственную разработку (dogfooding)
-- [ ] Метрики: скорость задач, активность, качество ревью
-- [ ] Подключение второго проекта — проверка переносимости
-- [ ] Публичный шаблон: «разверни свою Башню за вечер»
-
----
-
-## 🚪 Как присоединиться
-
-1. Вступи в Discord-сервер *(ссылка появится после Фазы 0)*;
-2. Представься в `#help` — получишь роль 🧱 Подмастерье;
-3. Возьми задачу с меткой [`good first issue`](https://github.com/skillariatop/Tower_of_Babel/labels/good%20first%20issue);
-4. Сделай PR — и ты на пути к ⚒️ Каменщику.
-
-Не умеешь кодить? Нужны и тестировщики, и техписатели, и модераторы, и дизайнеры процессов — вклад в `docs/` и `decisions/` ценится наравне с кодом.
+### Phase 5 — "Self-Construction"
+- [ ] The system fully manages its own development (dogfooding)
+- [ ] Metrics: task velocity, activity, review quality
+- [ ] Onboard a second project — test portability
+- [ ] A public template: "deploy your own Tower in an evening"
 
 ---
 
-## 📄 Лицензия
+## 🚪 How to Join
 
-Проект распространяется по лицензии из файла [LICENSE](LICENSE).
+The project's Discord server is available to Skillaria.Top students only:
 
-> *«И сказал Господь: вот, один народ, и один у всех язык; и вот что начали они делать, и не отстанут они от того, что задумали делать»* — Бытие 11:6.
-> На этот раз у нас есть система контроля версий.
+1. Become a student at [Skillaria.Top](https://skillaria.top);
+2. Learn and grow until you reach the **Intern** level;
+3. Get the Discord invite link in your personal dashboard;
+4. Introduce yourself in `#help` — you'll receive the 🧱 Apprentice role;
+5. Take a task labeled [`good first issue`](https://github.com/skillariatop/Tower_of_Babel/labels/good%20first%20issue);
+6. Open a PR — and you're on your way to ⚒️ Mason.
+
+Can't code? We also need testers, technical writers, moderators, and process designers — contributions to `docs/` and `decisions/` are valued as much as code.
+
+---
+
+## 📄 License
+
+The project is distributed under the license in the [LICENSE](LICENSE) file.
+
+> *"And the LORD said, Behold, the people is one, and they have all one language; and this they begin to do: and now nothing will be restrained from them, which they have imagined to do"* — Genesis 11:6.
+> This time, we have version control.
