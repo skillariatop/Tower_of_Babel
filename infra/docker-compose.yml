@@ -1,0 +1,32 @@
+services:
+  bot:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    volumes:
+      - ../decisions:/app/decisions   # decisions/ is the source of truth; keep it on host
+      - bot_data:/app/data
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tower
+      POSTGRES_USER: tower
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tower"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  bot_data:
+  pg_data:

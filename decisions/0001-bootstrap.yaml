@@ -1,0 +1,26 @@
+id: 1
+title: "Bootstrap: adopt project charter and governance rules"
+level: critical
+status: accepted
+supersedes: ~
+votes:
+  for: 1
+  against: 0
+  abstain: 0
+discord_thread: ""
+decided_at: "2026-06-12"
+decided_by: "skillariatop (founder, by-authority)"
+decision: |
+  The project Tower of Babel is officially started under the governance
+  rules described in README.md as of commit c2ea0d2.
+
+  Key points adopted:
+  - Five human roles: Observer, Apprentice, Mason, Architect, Keeper.
+  - Three decision levels: routine, significant, critical.
+  - AI Orchestrator has no merge rights and cannot modify its own config.
+  - This decisions/ directory is the single source of truth for the Orchestrator.
+  - Access to the Discord server requires Skillaria.Top student status
+    (Intern level) and an invite link from the personal dashboard.
+tasks_hint: |
+  No GitHub Issues needed for this bootstrap decision.
+  Next: Vote #1 to choose the tech stack (decision 0002).

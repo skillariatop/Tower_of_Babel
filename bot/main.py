@@ -1,0 +1,59 @@
+import asyncio
+import logging
+import sys
+
+import discord
+from discord.ext import commands
+
+from bot.config import settings
+
+logging.basicConfig(
+    level=settings.log_level,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    stream=sys.stdout,
+)
+log = logging.getLogger("tower")
+
+COGS = [
+    "bot.cogs.voting",
+    "bot.cogs.tasks",
+    "bot.cogs.roles",
+    "bot.cogs.audit",
+]
+
+
+class TowerBot(commands.Bot):
+    def __init__(self) -> None:
+        intents = discord.Intents.default()
+        intents.members = True
+        intents.message_content = True
+        super().__init__(command_prefix="!", intents=intents)
+
+    async def setup_hook(self) -> None:
+        for cog in COGS:
+            try:
+                await self.load_extension(cog)
+                log.info("Loaded cog: %s", cog)
+            except Exception as exc:
+                log.error("Failed to load cog %s: %s", cog, exc)
+
+        guild = discord.Object(id=settings.discord_guild_id)
+        self.tree.copy_global_to(guild=guild)
+        await self.tree.sync(guild=guild)
+        log.info("Slash commands synced to guild %d", settings.discord_guild_id)
+
+    async def on_ready(self) -> None:
+        log.info("Tower of Babel bot ready — logged in as %s", self.user)
+
+    async def on_command_error(self, ctx: commands.Context, error: Exception) -> None:  # type: ignore[override]
+        log.error("Command error: %s", error)
+
+
+async def main() -> None:
+    bot = TowerBot()
+    async with bot:
+        await bot.start(settings.discord_token)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
