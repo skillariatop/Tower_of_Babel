@@ -33,6 +33,10 @@ class Settings(BaseSettings):
     significant_quorum_pct: float = 0.5
     critical_quorum_pct: float = 0.5
 
+    # Webhook server
+    webhook_enabled: bool = True
+    webhook_port: int = 8090
+
     # Misc
     log_level: str = Field(default="INFO")
 
