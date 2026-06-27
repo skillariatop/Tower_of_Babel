@@ -1,0 +1,32 @@
+id: 2
+title: "Enable dogfooding: Tower of Babel manages its own development"
+level: significant
+status: accepted
+supersedes: ~
+votes:
+  for: 1
+  against: 0
+  abstain: 0
+discord_thread: ""
+decided_at: "2026-06-27"
+decided_by: "skillariatop (founder, by-authority)"
+decision: |
+  Starting from Phase 5, the Tower of Babel system manages its own
+  development using itself. All further development tasks must be:
+
+  1. Proposed as a community decision (in decisions/ or via /vote)
+  2. Decomposed by the AI Orchestrator into GitHub Issues
+  3. Assigned via /task take and completed via /task done
+  4. Reviewed by at least one Mason before merge
+  5. Released with auto-generated release notes
+
+  This is the first decision that the Orchestrator should decompose
+  automatically — its output will be the Phase 5 task backlog.
+tasks_hint: |
+  Create issues for:
+  - Set up GitHub Projects board linked to Tower_of_Babel repo
+  - Write metrics dashboard (weekly auto-post to #announcements)
+  - Create DEPLOY.md public onboarding guide
+  - Add /project register command for multi-project support
+  - Add contributor leaderboard to weekly digest
+  - Write end-to-end integration test suite

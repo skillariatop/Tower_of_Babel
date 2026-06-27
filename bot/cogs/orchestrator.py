@@ -15,6 +15,8 @@ from bot.config import settings
 from orchestrator.decompose import decompose_decision, decompose_decision_text
 from orchestrator.digest import generate_weekly_digest
 from orchestrator.llm import llm
+from orchestrator.metrics import collect as collect_metrics
+from orchestrator.projects import list_projects, register_project
 
 log = logging.getLogger("tower.orchestrator")
 
@@ -210,6 +212,106 @@ class OrchestratorCog(commands.Cog):
     @_weekly_digest.before_loop
     async def _before_digest(self) -> None:
         await self.bot.wait_until_ready()
+
+    # ------------------------------------------------------------------ #
+    #  /orchestrate metrics                                                #
+    # ------------------------------------------------------------------ #
+
+    @orch_group.command(name="metrics", description="Show project health metrics")
+    @app_commands.describe(days="Period in days (default 7)")
+    async def metrics(self, interaction: discord.Interaction, days: int = 7) -> None:
+        await interaction.response.defer()
+        try:
+            m = await collect_metrics(period_days=days)
+        except Exception as exc:
+            await interaction.followup.send(f"❌ Metrics collection failed: {exc}")
+            return
+
+        embed = discord.Embed(
+            title=f"📊 Tower of Babel — {days}-day Metrics",
+            color=discord.Color.blurple(),
+        )
+        embed.add_field(
+            name="🚀 Velocity",
+            value=(
+                f"Issues opened: **{m.issues_opened}** / closed: **{m.issues_closed}** "
+                f"({m.close_rate:.0%})\n"
+                f"PRs opened: **{m.prs_opened}** / merged: **{m.prs_merged}** "
+                f"({m.merge_rate:.0%})"
+            ),
+            inline=False,
+        )
+        embed.add_field(
+            name="👥 Contributors",
+            value=(
+                f"Active this period: **{len(m.active_contributors)}**\n"
+                f"New this period: **{len(m.new_contributors)}**\n"
+                f"All-time: **{len(m.all_time_contributors)}**"
+            ),
+            inline=True,
+        )
+        embed.add_field(
+            name="📋 Backlog",
+            value=(
+                f"Open issues: **{m.open_issues}**\n"
+                f"Stale (>7d): **{m.stale_issues}**\n"
+                f"Unassigned tasks: **{m.unassigned_tasks}**"
+            ),
+            inline=True,
+        )
+        embed.add_field(
+            name="🗳️ Governance",
+            value=f"Decisions accepted: **{m.decisions_made}**",
+            inline=True,
+        )
+        if m.active_contributors:
+            embed.set_footer(text="Contributors: " + ", ".join(sorted(m.active_contributors)[:10]))
+        await interaction.followup.send(embed=embed)
+
+    # ------------------------------------------------------------------ #
+    #  /orchestrate project list / register                               #
+    # ------------------------------------------------------------------ #
+
+    project_group = app_commands.Group(
+        name="project", description="Multi-project management", parent=orch_group
+    )
+
+    @project_group.command(name="list", description="List all registered projects")
+    async def project_list(self, interaction: discord.Interaction) -> None:
+        projects = list_projects()
+        if not projects:
+            await interaction.response.send_message("No projects registered.", ephemeral=True)
+            return
+        lines = [f"**{p.name}** (`{p.id}`) — `{p.github_repo}`" for p in projects]
+        embed = discord.Embed(
+            title="🗂️ Registered Projects",
+            description="\n".join(lines),
+            color=discord.Color.blurple(),
+        )
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @project_group.command(name="register", description="Register a new project (Architect+)")
+    @app_commands.describe(
+        project_id="Short slug (e.g. my-project)",
+        name="Human-readable name",
+        github_repo="owner/repo format",
+    )
+    async def project_register(
+        self,
+        interaction: discord.Interaction,
+        project_id: str,
+        name: str,
+        github_repo: str,
+    ) -> None:
+        if not await _is_mason_or_above(interaction):
+            await interaction.response.send_message("❌ Mason+ required.", ephemeral=True)
+            return
+        proj = register_project(project_id, name, github_repo)
+        await interaction.response.send_message(
+            f"✅ Registered **{proj.name}** (`{proj.id}`) → `{proj.github_repo}`\n"
+            f"Decisions dir: `{proj.decisions_dir}`",
+            ephemeral=True,
+        )
 
     async def _post_digest(self, text: str, guild: discord.Guild | None) -> None:
         if guild is None:
