@@ -3,9 +3,11 @@ import logging
 import sys
 
 import discord
+import uvicorn
 from discord.ext import commands
 
 from bot.config import settings
+from integrations import webhooks
 
 logging.basicConfig(
     level=settings.log_level,
@@ -51,8 +53,22 @@ class TowerBot(commands.Bot):
 
 async def main() -> None:
     bot = TowerBot()
+    webhooks.set_bot(bot)
+
+    # Run Discord bot and webhook server concurrently
+    config = uvicorn.Config(
+        webhooks.app,
+        host="0.0.0.0",
+        port=8080,
+        log_level=settings.log_level.lower(),
+    )
+    server = uvicorn.Server(config)
+
     async with bot:
-        await bot.start(settings.discord_token)
+        await asyncio.gather(
+            bot.start(settings.discord_token),
+            server.serve(),
+        )
 
 
 if __name__ == "__main__":

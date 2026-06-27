@@ -22,6 +22,7 @@ from discord import app_commands
 from discord.ext import commands, tasks
 
 from bot.config import settings
+from integrations import github
 
 log = logging.getLogger("tower.voting")
 
@@ -316,6 +317,28 @@ class VotingCog(commands.Cog):
         self._next_decision_id += 1
         log.info("Decision written: %s", path)
 
+        # Auto-create GitHub Issue for accepted decisions
+        gh_issue_url = ""
+        if vote.result and settings.github_token and settings.github_token != "your-github-pat-here":
+            try:
+                body = (
+                    f"## Decision accepted by community vote\n\n"
+                    f"**Vote #{vote.id}** · level: `{vote.level.value}` · "
+                    f"✅ {len(vote.votes_for)} / ❌ {len(vote.votes_against)} / 🤷 {len(vote.votes_abstain)}\n\n"
+                    f"**Discord thread:** {vote.discord_thread_url}\n"
+                    f"**Decision file:** `{filename}`\n\n"
+                    f"---\n*Auto-created by Tower of Babel Orchestrator.*"
+                )
+                issue = await github.create_issue(
+                    title=f"[Decision #{self._next_decision_id - 1}] {vote.title}",
+                    body=body,
+                    labels=["task", "from-vote"],
+                )
+                gh_issue_url = issue.url
+                log.info("GitHub Issue #%d created for vote #%d", issue.number, vote.id)
+            except Exception as exc:
+                log.warning("Could not create GitHub Issue for vote #%d: %s", vote.id, exc)
+
         # Update the original voting message
         if guild:
             channel = await self._get_voting_channel(guild)
@@ -326,6 +349,16 @@ class VotingCog(commands.Cog):
                 except Exception as exc:
                     log.warning("Could not update vote message: %s", exc)
 
+            # Post to #tasks if accepted
+            if vote.result:
+                tasks_ch = await self._get_channel(guild, settings.tasks_channel_name)
+                if tasks_ch:
+                    msg_text = (
+                        f"📋 New task from accepted vote: **{vote.title}**"
+                        + (f"\n🔗 GitHub Issue: {gh_issue_url}" if gh_issue_url else "")
+                    )
+                    await tasks_ch.send(msg_text)
+
             # Post to audit log
             audit = await self._get_channel(guild, settings.audit_channel_name)
             if audit:
@@ -333,6 +366,7 @@ class VotingCog(commands.Cog):
                     f"📋 Vote #{vote.id} **{status}**: {vote.title} "
                     f"(✅{len(vote.votes_for)} ❌{len(vote.votes_against)} "
                     f"🤷{len(vote.votes_abstain)}) → `{filename}`"
+                    + (f" → {gh_issue_url}" if gh_issue_url else "")
                 )
 
     # ------------------------------------------------------------------ #
