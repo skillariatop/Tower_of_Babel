@@ -25,6 +25,10 @@ COGS = [
     "bot.cogs.admin",
 ]
 
+POLLING_COGS = [
+    "integrations.poller",
+]
+
 
 class TowerBot(commands.Bot):
     def __init__(self) -> None:
@@ -34,7 +38,8 @@ class TowerBot(commands.Bot):
         super().__init__(command_prefix="!", intents=intents)
 
     async def setup_hook(self) -> None:
-        for cog in COGS:
+        all_cogs = COGS + (POLLING_COGS if not settings.webhook_enabled else [])
+        for cog in all_cogs:
             try:
                 await self.load_extension(cog)
                 log.info("Loaded cog: %s", cog)
