@@ -23,6 +23,7 @@ from discord.ext import commands, tasks
 
 from bot.config import settings
 from integrations import github
+from orchestrator.decompose import decompose_decision
 
 log = logging.getLogger("tower.voting")
 
@@ -359,6 +360,10 @@ class VotingCog(commands.Cog):
                     )
                     await tasks_ch.send(msg_text)
 
+            # AI decomposition — fire-and-forget in background
+            if vote.result and path.exists():
+                asyncio.create_task(self._run_decomposition(path, guild))
+
             # Post to audit log
             audit = await self._get_channel(guild, settings.audit_channel_name)
             if audit:
@@ -367,6 +372,38 @@ class VotingCog(commands.Cog):
                     f"(✅{len(vote.votes_for)} ❌{len(vote.votes_against)} "
                     f"🤷{len(vote.votes_abstain)}) → `{filename}`"
                     + (f" → {gh_issue_url}" if gh_issue_url else "")
+                )
+
+    # ------------------------------------------------------------------ #
+    #  AI decomposition (background)                                       #
+    # ------------------------------------------------------------------ #
+
+    async def _run_decomposition(
+        self, decision_path: Path, guild: Optional[discord.Guild]
+    ) -> None:
+        log.info("Starting AI decomposition for %s", decision_path.name)
+        tasks_ch = await self._get_channel(guild, settings.tasks_channel_name) if guild else None
+        try:
+            issues = await decompose_decision(decision_path)
+            if not issues:
+                return
+            lines = [f"🤖 **AI decomposed decision into {len(issues)} task(s):**"]
+            for di in issues:
+                if di.github_issue:
+                    gfi = " 🟢 good first issue" if di.good_first_issue else ""
+                    lines.append(
+                        f"  • [{di.github_issue.number}]({di.github_issue.url}) "
+                        f"**{di.title}** `{di.estimate}`{gfi}"
+                    )
+                else:
+                    lines.append(f"  • {di.title} `{di.estimate}` *(issue creation failed)*")
+            if tasks_ch:
+                await tasks_ch.send("\n".join(lines))
+        except Exception as exc:
+            log.error("Decomposition failed: %s", exc)
+            if tasks_ch:
+                await tasks_ch.send(
+                    f"⚠️ AI decomposition failed for `{decision_path.name}`: {exc}"
                 )
 
     # ------------------------------------------------------------------ #

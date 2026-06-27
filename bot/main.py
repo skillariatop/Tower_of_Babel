@@ -21,6 +21,7 @@ COGS = [
     "bot.cogs.tasks",
     "bot.cogs.roles",
     "bot.cogs.audit",
+    "bot.cogs.orchestrator",
 ]
 
 
